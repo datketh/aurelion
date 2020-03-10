@@ -26,11 +26,17 @@ public class PlayerUI : MonoBehaviour
 
     private void DrawOrdersBar ()
     {
-
+        GUI.skin = ordersSkin;
+        GUI.BeginGroup(new Rect(Screen.width - ORDERS_BAR_WIDTH, RESOURCE_BAR_HEIGHT, ORDERS_BAR_WIDTH, Screen.height - RESOURCE_BAR_HEIGHT));
+        GUI.Box(new Rect(0, 0, ORDERS_BAR_WIDTH, Screen.height - RESOURCE_BAR_HEIGHT), "");
+        GUI.EndGroup();
     }
 
     private void DrawResourceBar ()
     {
-
+        GUI.skin = resourceSkin;
+        GUI.BeginGroup(new Rect(0, 0, Screen.width, RESOURCE_BAR_HEIGHT));
+        GUI.Box(new Rect(0, 0, Screen.width, RESOURCE_BAR_HEIGHT), "");
+        GUI.EndGroup();
     }
 }
