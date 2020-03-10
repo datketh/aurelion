@@ -29,7 +29,7 @@ public class PlayerUI : MonoBehaviour
     {
         GUI.skin = ordersSkin;
         GUI.BeginGroup(new Rect(Screen.width - ORDERS_BAR_WIDTH, RESOURCE_BAR_HEIGHT, ORDERS_BAR_WIDTH, Screen.height - RESOURCE_BAR_HEIGHT));
-        Debug.Log("should have drawn orders bar");
+        //Debug.Log("should have drawn orders bar");
         GUI.Box(new Rect(0, 0, ORDERS_BAR_WIDTH, Screen.height - RESOURCE_BAR_HEIGHT), "");
 
         string selectionName = "";

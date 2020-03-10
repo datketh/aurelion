@@ -30,6 +30,9 @@ public class InputManager : MonoBehaviour {
         float yPos = Input.mousePosition.y;
         Vector3 movement = new Vector3(0, 0, 0);
 
+        Debug.Log(xPos);
+        Debug.Log(yPos);
+
         // Get X scrolling movement
         if (xPos >= 0 && xPos < ResourceManager.ScrollWidth)
         {
@@ -76,6 +79,7 @@ public class InputManager : MonoBehaviour {
         if (destination != origin)
         {
             Camera.main.transform.position = Vector3.MoveTowards(origin, destination, Time.deltaTime * ResourceManager.ScrollSpeed);
+            Debug.Log("Should be moving camera");
         }
     }
 
