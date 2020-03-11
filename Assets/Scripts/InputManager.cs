@@ -125,7 +125,7 @@ public class InputManager : MonoBehaviour {
                     {
                         //we already know the player has no selected object
                         player.SelectedObject = worldObject;
-                        worldObject.SetSelection(true);
+                        worldObject.SetSelection(true, player.hud.GetPlayingArea());
                     }
                 }
             }
@@ -136,7 +136,7 @@ public class InputManager : MonoBehaviour {
     {
         if (player.hud.MouseInBounds() && !Input.GetKey(KeyCode.LeftAlt) && player.SelectedObject)
         {
-            player.SelectedObject.SetSelection(false);
+            player.SelectedObject.SetSelection(false, player.hud.GetPlayingArea());
             player.SelectedObject = null;
         }
     }
