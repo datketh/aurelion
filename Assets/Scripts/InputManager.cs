@@ -123,6 +123,28 @@ public class InputManager : MonoBehaviour {
         else if (Input.GetMouseButtonDown(1)) RightMouseClick();
     }
 
+    private void MouseHover()
+    {
+        if (player.hud.MouseInBounds())
+        {
+            GameObject hoverObject = FindHitObject();
+            if (hoverObject)
+            {
+                if (player.SelectedObject) player.SelectedObject.SetHoverState(hoverObject);
+                else if (hoverObject.name != "Ground")
+                {
+                    Player owner = hoverObject.transform.root.GetComponent<Player>();
+                    if (owner)
+                    {
+                        Unit unit = hoverObject.transform.parent.GetComponent<Unit>();
+                        Building building = hoverObject.transform.parent.GetComponent<Building>();
+                        if (owner.username == player.username && (unit || building)) player.hud.SetCursorState(CursorState.Select);
+                    }
+                }
+            }
+        }
+    }
+
     private void LeftMouseClick()
     {
         if (player.hud.MouseInBounds())

@@ -96,4 +96,12 @@ public class WorldObject : MonoBehaviour
             selectionBounds.Encapsulate(r.bounds);
         }
     }
+
+    public virtual void SetHoverState(GameObject hoverObject)
+    {
+        if (player && player.human && currentlySelected)
+        {
+            //if (hoverObject.name != "Ground") player.hud.SetCursorState(CursorState.Select);
+        }
+    }
 }
