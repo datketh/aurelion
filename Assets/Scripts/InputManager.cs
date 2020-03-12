@@ -30,26 +30,35 @@ public class InputManager : MonoBehaviour {
         float yPos = Input.mousePosition.y;
         Vector3 movement = new Vector3(0, 0, 0);
 
-        Debug.Log(xPos);
-        Debug.Log(yPos);
+        // Initialize hud variables
+        bool mouseScroll = false;
 
         // Get X scrolling movement
         if (xPos >= 0 && xPos < ResourceManager.ScrollWidth)
         {
             movement.x -= ResourceManager.ScrollSpeed;
-        } else if (xPos <= Screen.width && xPos > Screen.width - ResourceManager.ScrollWidth)
+            player.hud.SetCursorState(CursorState.PanLeft);
+            mouseScroll = true;
+        }
+        else if (xPos <= Screen.width && xPos > Screen.width - ResourceManager.ScrollWidth)
         {
             movement.x += ResourceManager.ScrollSpeed;
+            player.hud.SetCursorState(CursorState.PanRight);
+            mouseScroll = true;
         }
 
         // Get Y scrolling movement
         if (yPos >= 0 && yPos < ResourceManager.ScrollWidth)
         {
             movement.z -= ResourceManager.ScrollSpeed;
+            player.hud.SetCursorState(CursorState.PanUp);
+            mouseScroll = true;
         }
         else if (yPos <= Screen.height && yPos > Screen.height - ResourceManager.ScrollWidth)
         {
             movement.z += ResourceManager.ScrollSpeed;
+            player.hud.SetCursorState(CursorState.PanDown);
+            mouseScroll = true;
         }
 
         // Keep movement in the direction the camera is pointed
@@ -79,7 +88,12 @@ public class InputManager : MonoBehaviour {
         if (destination != origin)
         {
             Camera.main.transform.position = Vector3.MoveTowards(origin, destination, Time.deltaTime * ResourceManager.ScrollSpeed);
-            Debug.Log("Should be moving camera");
+        }
+
+        // Ensure cursor state
+        if (!mouseScroll)
+        {
+            player.hud.SetCursorState(CursorState.Select);
         }
     }
 

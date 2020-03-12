@@ -71,4 +71,16 @@ namespace RTS
             return new Rect(selectBoxLeft, selectBoxTop, selectBoxWidth, selectBoxHeight);
         }
     }
+
+    public enum CursorState
+    {
+        Select,
+        Move,
+        Attack,
+        PanLeft,
+        PanRight,
+        PanUp,
+        PanDown,
+        Harvest
+    }
 }
