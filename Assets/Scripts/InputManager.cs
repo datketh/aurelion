@@ -121,6 +121,7 @@ public class InputManager : MonoBehaviour {
     {
         if (Input.GetMouseButtonDown(0)) LeftMouseClick();
         else if (Input.GetMouseButtonDown(1)) RightMouseClick();
+        MouseHover();
     }
 
     private void MouseHover()
@@ -156,7 +157,7 @@ public class InputManager : MonoBehaviour {
                 if (player.SelectedObject) player.SelectedObject.MouseClick(hitObject, hitPoint, player);
                 else if (hitObject.name != "Ground")
                 {
-                    WorldObject worldObject = hitObject.transform.root.GetComponent<WorldObject>();
+                    WorldObject worldObject = hitObject.transform.parent.GetComponent<WorldObject>();
                     if (worldObject)
                     {
                         //we already know the player has no selected object

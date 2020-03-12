@@ -24,7 +24,7 @@ public class WorldObject : MonoBehaviour
 
     protected virtual void Start()
     {
-        player = transform.root.GetComponentInChildren<Player>();
+        player = transform.root.GetComponent<Player>();
     }
 
     protected virtual void Update()
@@ -58,7 +58,7 @@ public class WorldObject : MonoBehaviour
         //only handle input if currently selected
         if (currentlySelected && hitObject && hitObject.name != "Ground")
         {
-            WorldObject worldObject = hitObject.transform.root.GetComponent<WorldObject>();
+            WorldObject worldObject = hitObject.transform.parent.GetComponent<WorldObject>();
             //clicked on another selectable object
             if (worldObject) ChangeSelection(worldObject, controller);
         }
@@ -101,7 +101,7 @@ public class WorldObject : MonoBehaviour
     {
         if (player && player.human && currentlySelected)
         {
-            //if (hoverObject.name != "Ground") player.hud.SetCursorState(CursorState.Select);
+            if (hoverObject.name != "Ground") player.hud.SetCursorState(CursorState.Select);
         }
     }
 }
