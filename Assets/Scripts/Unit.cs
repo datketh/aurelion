@@ -43,7 +43,6 @@ public class Unit : WorldObject
         // Only handle input if owned by human player and selected currently
         if (player && player.human && currentlySelected)
         {
-            Debug.Log("Player is real and human and selecting this object");
             if (hoverObject.name == "Ground") player.hud.SetCursorState(CursorState.Move);
         }
     }
