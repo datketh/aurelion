@@ -31,7 +31,10 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (human)
+        {
+            hud.SetResourceValues(resources, resourceLimits);
+        }
     }
 
     public void AddResource(ResourceType type, int amt)

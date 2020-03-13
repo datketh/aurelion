@@ -7,6 +7,9 @@ public class PlayerUI : MonoBehaviour
 {
     private const int ORDERS_BAR_WIDTH = 100, RESOURCE_BAR_HEIGHT = 40;
     private const int SELECTION_NAME_HEIGHT = 15;
+    private const int ICON_WIDTH = 32, ICON_HEIGHT = 32;
+    private const int TEXT_WIDTH = 128, TEXT_HEIGHT = 32;
+
     private Player player;
 
     public GUISkin resourceSkin, ordersSkin;
@@ -17,8 +20,13 @@ public class PlayerUI : MonoBehaviour
     public Texture2D selectCursor, leftCursor, rightCursor, upCursor, downCursor;
     public Texture2D[] moveCursors, attackCursors, harvestCursors;
 
+    public Texture2D[] resources;
+    private Dictionary<ResourceType, Texture2D> resourceImages;
+
     private CursorState activeCursorState;
     private int currentFrame;
+
+    private Dictionary<ResourceType, int> resourceValues, resourceLimits;
 
 
     // Start is called before the first frame update
@@ -27,6 +35,9 @@ public class PlayerUI : MonoBehaviour
         player = transform.root.GetComponent<Player>();
         ResourceManager.StoreSelectBoxItems(selectBoxSkin);
         SetCursorState(CursorState.Select);
+        resourceValues = new Dictionary<ResourceType, int>();
+        resourceLimits = new Dictionary<ResourceType, int>();
+        InitializeResourceImages();
     }
 
     // Update is called once per frame
@@ -64,7 +75,52 @@ public class PlayerUI : MonoBehaviour
         GUI.skin = resourceSkin;
         GUI.BeginGroup(new Rect(0, 0, Screen.width, RESOURCE_BAR_HEIGHT));
         GUI.Box(new Rect(0, 0, Screen.width, RESOURCE_BAR_HEIGHT), "");
+
+        int topPos = 4, iconLeft = 4, textLeft = 20;
+        DrawResourceIcon(ResourceType.Money, iconLeft, textLeft, topPos);
+        iconLeft += TEXT_WIDTH;
+        textLeft += TEXT_WIDTH;
+        DrawResourceIcon(ResourceType.Power, iconLeft, textLeft, topPos);
+
         GUI.EndGroup();
+    }
+
+    private void DrawResourceIcon(ResourceType type, int iconLeft, int textLeft, int topPos)
+    {
+        Texture2D icon = resourceImages[type];
+        Debug.Log(icon.name);
+        string text = resourceValues[type].ToString() + "/" + resourceLimits[type].ToString();
+        GUI.DrawTexture(new Rect(iconLeft, topPos, ICON_WIDTH, ICON_HEIGHT), icon);
+        GUI.Label(new Rect(textLeft, topPos, TEXT_WIDTH, TEXT_HEIGHT), text);
+    }
+
+    public void SetResourceValues(Dictionary<ResourceType, int> resValues, Dictionary<ResourceType, int> resLimits)
+    {
+        resourceValues = resValues;
+        resourceLimits = resLimits;
+    }
+
+    private void InitializeResourceImages()
+    {
+        resourceImages = new Dictionary<ResourceType, Texture2D>();
+        for (int i = 0; i < resources.Length; i++)
+        {
+            switch(resources[i].name)
+            {
+                case "Money":
+                    resourceImages.Add(ResourceType.Money, resources[i]);
+                    resourceValues.Add(ResourceType.Money, 0);
+                    resourceLimits.Add(ResourceType.Money, 0);
+                    break;
+                case "Power":
+                    resourceImages.Add(ResourceType.Power, resources[i]);
+                    resourceValues.Add(ResourceType.Power, 0);
+                    resourceLimits.Add(ResourceType.Power, 0);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public bool MouseInBounds()
