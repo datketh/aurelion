@@ -175,7 +175,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 24774024}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 5.32, y: 15.69, z: -9.22}
+  m_LocalPosition: {x: 10.11, y: 35.15, z: -17.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -651,6 +651,9 @@ MonoBehaviour:
   harvestCursors:
   - {fileID: 2800000, guid: bab14a27580bf0f429018de801a8879c, type: 3}
   - {fileID: 2800000, guid: 43d46321dbcb4d34e803f388ac059abb, type: 3}
+  resources:
+  - {fileID: 2800000, guid: 04501d7882fdb6a45b88b3ea0347a00f, type: 3}
+  - {fileID: 2800000, guid: 63e2c4f7744b8da4e8620dbb1e420eb8, type: 3}
 --- !u!1 &822064874
 GameObject:
   m_ObjectHideFlags: 0
@@ -855,6 +858,10 @@ MonoBehaviour:
   username: keith
   human: 1
   hud: {fileID: 749923578}
+  startMoney: 100
+  startMoneyLimit: 1000
+  startPower: 50
+  startPowerLimit: 500
 --- !u!1 &1796460696
 GameObject:
   m_ObjectHideFlags: 0
