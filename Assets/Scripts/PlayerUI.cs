@@ -5,11 +5,11 @@ using RTS;
 
 public class PlayerUI : MonoBehaviour
 {
-    private const int ORDERS_BAR_WIDTH = 200, RESOURCE_BAR_HEIGHT = 40;
+    private const int ORDERS_BAR_WIDTH = 150, RESOURCE_BAR_HEIGHT = 40;
     private const int SELECTION_NAME_HEIGHT = 15;
     private const int ICON_WIDTH = 32, ICON_HEIGHT = 32;
     private const int TEXT_WIDTH = 128, TEXT_HEIGHT = 32;
-    private const int BUILD_IMG_WIDTH = 64, BUILD_IMG_HEIGHT = 64;
+    private const int BUILD_IMG_WIDTH = 64, BUILD_IMG_HEIGHT = 64, BUILD_IMG_PADDING = 8;
     private const int SCROLL_BAR_WIDTH = 22;
     private const int BUTTON_SPACING = 7;
 
@@ -24,6 +24,8 @@ public class PlayerUI : MonoBehaviour
     public Texture2D[] moveCursors, attackCursors, harvestCursors;
 
     public Texture2D buttonClick, buttonHover;
+
+    public Texture2D buildFrame, buildMask;
 
     public Texture2D[] resources;
     private Dictionary<ResourceType, Texture2D> resourceImages;
@@ -65,8 +67,8 @@ public class PlayerUI : MonoBehaviour
     private void DrawOrdersBar ()
     {
         GUI.skin = ordersSkin;
-        GUI.BeginGroup(new Rect(Screen.width - ORDERS_BAR_WIDTH, RESOURCE_BAR_HEIGHT, ORDERS_BAR_WIDTH, Screen.height - RESOURCE_BAR_HEIGHT));
-        GUI.Box(new Rect(0, 0, ORDERS_BAR_WIDTH, Screen.height - RESOURCE_BAR_HEIGHT), "");
+        GUI.BeginGroup(new Rect(Screen.width - ORDERS_BAR_WIDTH - BUILD_IMG_WIDTH, RESOURCE_BAR_HEIGHT, ORDERS_BAR_WIDTH + BUILD_IMG_WIDTH, Screen.height - RESOURCE_BAR_HEIGHT));
+        GUI.Box(new Rect(BUILD_IMG_WIDTH + SCROLL_BAR_WIDTH, 0, ORDERS_BAR_WIDTH, Screen.height - RESOURCE_BAR_HEIGHT), "");
 
         string selectionName = "";
         if (player.SelectedObject)
@@ -78,12 +80,19 @@ public class PlayerUI : MonoBehaviour
                 DrawActions(player.SelectedObject.GetActions());
                 // Store current selection
                 lastSelection = player.SelectedObject;
+
+                Building selectedBuilding = lastSelection.GetComponent<Building>();
+                if (selectedBuilding)
+                {
+                    DrawBuildQueue(selectedBuilding.GetBuildQueueValues(), selectedBuilding.GetBuildPercentage());
+                }
             }
         }
         if (!selectionName.Equals(""))
         {
+            int leftPos = BUILD_IMG_WIDTH + SCROLL_BAR_WIDTH / 2;
             int topPos = buildAreaHeight + BUTTON_SPACING;
-            GUI.Label(new Rect(0, topPos, ORDERS_BAR_WIDTH, SELECTION_NAME_HEIGHT), selectionName);
+            GUI.Label(new Rect(leftPos, topPos, ORDERS_BAR_WIDTH, SELECTION_NAME_HEIGHT), selectionName);
         }
 
         GUI.EndGroup();
@@ -98,7 +107,7 @@ public class PlayerUI : MonoBehaviour
 
         int numActions = actions.Length;
 
-        GUI.BeginGroup(new Rect(0, 0, ORDERS_BAR_WIDTH, buildAreaHeight));
+        GUI.BeginGroup(new Rect(BUILD_IMG_WIDTH, 0, ORDERS_BAR_WIDTH, buildAreaHeight));
         // 
         if (numActions >= MaxNumRows(buildAreaHeight)) DrawSlider(buildAreaHeight, numActions / 2.0f);
 
@@ -140,6 +149,26 @@ public class PlayerUI : MonoBehaviour
     private Rect GetScrollPos(int grpHeight)
     {
         return new Rect(BUTTON_SPACING, BUTTON_SPACING, SCROLL_BAR_WIDTH, grpHeight - 2 * BUTTON_SPACING);
+    }
+
+    private void DrawBuildQueue(string[] queue, float percent)
+    {
+        for (int i = 0; i < queue.Length; i++)
+        {
+            float top = i * BUILD_IMG_HEIGHT - (i + 1) * BUILD_IMG_PADDING;
+            Rect buildPos = new Rect(BUILD_IMG_PADDING, top, BUILD_IMG_WIDTH, BUILD_IMG_HEIGHT);
+            GUI.DrawTexture(buildPos, ResourceManager.GetBuildImage(queue[i]));
+            GUI.DrawTexture(buildPos, buildFrame);
+            top += BUILD_IMG_PADDING;
+            float w = BUILD_IMG_WIDTH - 2 * BUILD_IMG_PADDING;
+            float h = BUILD_IMG_HEIGHT - 2 * BUILD_IMG_PADDING;
+            if (i == 0)
+            {
+                top += h * percent;
+                h *= (1 - percent);
+            }
+            GUI.DrawTexture(new Rect(2 * BUILD_IMG_PADDING, top, w, h), buildMask);
+        }
     }
 
     private void DrawResourceBar ()

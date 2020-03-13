@@ -16,9 +16,9 @@ public class Building : WorldObject
         base.Awake();
 
         buildQueue = new Queue<string>();
-        float spawnX = selectionBounds.center.x + transform.forward.x * (selectionBounds.extents.x + 10);
-        float spawnZ = selectionBounds.center.z + transform.forward.z * (selectionBounds.extents.z + 10);
-        spawnPoint = new Vector3(spawnX, 0.0f, spawnZ);
+        float spawnX = selectionBounds.center.x + transform.forward.x * (selectionBounds.extents.x + 2);
+        float spawnZ = selectionBounds.center.z + transform.forward.z * (selectionBounds.extents.z + 2);
+        spawnPoint = new Vector3(spawnX, transform.position.y, spawnZ);
     }
 
     protected override void Start()

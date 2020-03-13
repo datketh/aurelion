@@ -233,4 +233,4 @@ MonoBehaviour:
   sellValue: 10
   hitPoints: 100
   maxHitPoints: 100
-  maxBuildProgress: 1
+  maxBuildProgress: 10

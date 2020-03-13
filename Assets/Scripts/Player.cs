@@ -70,5 +70,8 @@ public class Player : MonoBehaviour
     public void AddUnit(string name, Vector3 spawnPoint, Quaternion rotation)
     {
         Debug.Log("Add " + name + "to player");
+        Units units = GetComponentInChildren<Units>();
+        GameObject newUnit = (GameObject)Instantiate(ResourceManager.GetUnit(name), spawnPoint, rotation);
+        newUnit.transform.parent = units.transform;
     }
 }
