@@ -106,8 +106,8 @@ public class InputManager : MonoBehaviour {
         // Get user input
         if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetMouseButton(1))
         {
-            destination.x -= Input.GetAxis("Mouse X") * ResourceManager.RotateAmount;
-            destination.y += Input.GetAxis("Mouse Y") * ResourceManager.RotateAmount;
+            destination.x += Input.GetAxis("Mouse X") * ResourceManager.RotateAmount;
+            destination.y -= Input.GetAxis("Mouse Y") * ResourceManager.RotateAmount;
         }
 
         // If is angle is changed, update transform
