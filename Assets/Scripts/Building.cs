@@ -10,6 +10,7 @@ public class Building : WorldObject
     protected Queue<string> buildQueue;
     private float currentBuildProgress = 0.0f;
     private Vector3 spawnPoint;
+    protected Vector3 rallyPoint;
 
     protected override void Awake()
     {
@@ -18,7 +19,9 @@ public class Building : WorldObject
         buildQueue = new Queue<string>();
         float spawnX = selectionBounds.center.x + transform.forward.x * (selectionBounds.extents.x + 2);
         float spawnZ = selectionBounds.center.z + transform.forward.z * (selectionBounds.extents.z + 2);
-        spawnPoint = new Vector3(spawnX, transform.position.y, spawnZ);
+        spawnPoint = new Vector3(spawnX, 0.0f, spawnZ);
+
+        rallyPoint = spawnPoint;
     }
 
     protected override void Start()
@@ -35,6 +38,28 @@ public class Building : WorldObject
     protected override void OnGUI()
     {
         base.OnGUI();
+    }
+
+    public override void SetSelection(bool selected, Rect playArea)
+    {
+        base.SetSelection(selected, playArea);
+
+        if (player)
+        {
+            RallyPoint flag = player.GetComponentInChildren<RallyPoint>();
+            if (selected)
+            {
+                if (flag && player.human && spawnPoint != ResourceManager.InvalidPosition && rallyPoint != ResourceManager.InvalidPosition)
+                {
+                    flag.transform.localPosition = rallyPoint;
+                    flag.transform.forward = transform.forward;
+                    flag.Enable();
+                } else
+                {
+                    if (flag && player.human) flag.Disable();
+                }
+            }
+        }
     }
 
     protected void CreateUnit(string unitName)

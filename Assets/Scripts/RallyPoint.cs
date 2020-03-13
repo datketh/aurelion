@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class RallyPoint : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public void Enable()
     {
-        
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (Renderer renderer in renderers) renderer.enabled = true;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Disable()
     {
-        
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (Renderer renderer in renderers) renderer.enabled = false;
     }
 }
