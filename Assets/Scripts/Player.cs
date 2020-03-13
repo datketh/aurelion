@@ -67,5 +67,8 @@ public class Player : MonoBehaviour
         AddResource(ResourceType.Power, startPower);
     }
 
-
+    public void AddUnit(string name, Vector3 spawnPoint, Quaternion rotation)
+    {
+        Debug.Log("Add " + name + "to player");
+    }
 }

@@ -69,6 +69,18 @@ public class WorldObject : MonoBehaviour
         GUI.Box(selectBox, "");
     }
 
+    public bool IsOwnedBy(Player owner)
+    {
+        if (player && player.Equals(owner))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     private void ChangeSelection(WorldObject worldObject, Player controller)
     {
         //this should be called by the following line, but there is an outside chance it will not

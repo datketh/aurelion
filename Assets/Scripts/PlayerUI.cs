@@ -5,10 +5,13 @@ using RTS;
 
 public class PlayerUI : MonoBehaviour
 {
-    private const int ORDERS_BAR_WIDTH = 100, RESOURCE_BAR_HEIGHT = 40;
+    private const int ORDERS_BAR_WIDTH = 200, RESOURCE_BAR_HEIGHT = 40;
     private const int SELECTION_NAME_HEIGHT = 15;
     private const int ICON_WIDTH = 32, ICON_HEIGHT = 32;
     private const int TEXT_WIDTH = 128, TEXT_HEIGHT = 32;
+    private const int BUILD_IMG_WIDTH = 64, BUILD_IMG_HEIGHT = 64;
+    private const int SCROLL_BAR_WIDTH = 22;
+    private const int BUTTON_SPACING = 7;
 
     private Player player;
 
@@ -20,6 +23,8 @@ public class PlayerUI : MonoBehaviour
     public Texture2D selectCursor, leftCursor, rightCursor, upCursor, downCursor;
     public Texture2D[] moveCursors, attackCursors, harvestCursors;
 
+    public Texture2D buttonClick, buttonHover;
+
     public Texture2D[] resources;
     private Dictionary<ResourceType, Texture2D> resourceImages;
 
@@ -27,6 +32,10 @@ public class PlayerUI : MonoBehaviour
     private int currentFrame;
 
     private Dictionary<ResourceType, int> resourceValues, resourceLimits;
+
+    private WorldObject lastSelection;
+    private float sliderValue;
+    private int buildAreaHeight;
 
 
     // Start is called before the first frame update
@@ -38,6 +47,8 @@ public class PlayerUI : MonoBehaviour
         resourceValues = new Dictionary<ResourceType, int>();
         resourceLimits = new Dictionary<ResourceType, int>();
         InitializeResourceImages();
+
+        buildAreaHeight = Screen.height - RESOURCE_BAR_HEIGHT - SELECTION_NAME_HEIGHT - 2 * BUTTON_SPACING;
     }
 
     // Update is called once per frame
@@ -61,13 +72,74 @@ public class PlayerUI : MonoBehaviour
         if (player.SelectedObject)
         {
             selectionName = player.SelectedObject.objectName;
+            if (player.SelectedObject.IsOwnedBy(player))
+            {
+                if (lastSelection && lastSelection != player.SelectedObject) sliderValue = 0.0f;
+                DrawActions(player.SelectedObject.GetActions());
+                // Store current selection
+                lastSelection = player.SelectedObject;
+            }
         }
         if (!selectionName.Equals(""))
         {
-            GUI.Label(new Rect(0, 10, ORDERS_BAR_WIDTH, SELECTION_NAME_HEIGHT), selectionName);
+            int topPos = buildAreaHeight + BUTTON_SPACING;
+            GUI.Label(new Rect(0, topPos, ORDERS_BAR_WIDTH, SELECTION_NAME_HEIGHT), selectionName);
         }
 
         GUI.EndGroup();
+    }
+
+    private void DrawActions(string[] actions)
+    {
+        GUIStyle buttons = new GUIStyle();
+        buttons.hover.background = buttonHover;
+        buttons.active.background = buttonClick;
+        GUI.skin.button = buttons;
+
+        int numActions = actions.Length;
+
+        GUI.BeginGroup(new Rect(0, 0, ORDERS_BAR_WIDTH, buildAreaHeight));
+        // 
+        if (numActions >= MaxNumRows(buildAreaHeight)) DrawSlider(buildAreaHeight, numActions / 2.0f);
+
+        for (int i = 0; i < numActions; i++)
+        {
+            int column = i % 2;
+            int row = i / 2;
+            Rect pos = GetButtonPos(row, column);
+            Texture2D action = ResourceManager.GetBuildImage(actions[i]);
+            if (action)
+            {
+                if (GUI.Button(pos, action))
+                {
+                    if (player.SelectedObject) player.SelectedObject.PerformAction(actions[i]);
+                }
+            }
+        }
+
+        GUI.EndGroup();
+    }
+
+    private int MaxNumRows(int areaHeight)
+    {
+        return areaHeight / BUILD_IMG_HEIGHT;
+    }
+
+    private Rect GetButtonPos(int row, int column)
+    {
+        int left = SCROLL_BAR_WIDTH + column * BUILD_IMG_WIDTH;
+        float top = row * BUILD_IMG_HEIGHT - sliderValue * BUILD_IMG_HEIGHT;
+        return new Rect(left, top, BUILD_IMG_WIDTH, BUILD_IMG_HEIGHT);
+    }
+
+    private void DrawSlider(int grpHeight, float numRows)
+    {
+        sliderValue = GUI.VerticalSlider(GetScrollPos(grpHeight), sliderValue, 0.0f, numRows - MaxNumRows(grpHeight));
+    }
+
+    private Rect GetScrollPos(int grpHeight)
+    {
+        return new Rect(BUTTON_SPACING, BUTTON_SPACING, SCROLL_BAR_WIDTH, grpHeight - 2 * BUTTON_SPACING);
     }
 
     private void DrawResourceBar ()
@@ -88,7 +160,6 @@ public class PlayerUI : MonoBehaviour
     private void DrawResourceIcon(ResourceType type, int iconLeft, int textLeft, int topPos)
     {
         Texture2D icon = resourceImages[type];
-        Debug.Log(icon.name);
         string text = resourceValues[type].ToString() + "/" + resourceLimits[type].ToString();
         GUI.DrawTexture(new Rect(iconLeft, topPos, ICON_WIDTH, ICON_HEIGHT), icon);
         GUI.Label(new Rect(textLeft, topPos, TEXT_WIDTH, TEXT_HEIGHT), text);
