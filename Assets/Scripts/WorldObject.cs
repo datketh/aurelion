@@ -48,6 +48,11 @@ public class WorldObject : MonoBehaviour
         return actions;
     }
 
+    public bool IsSelected()
+    {
+        return player && player.human && currentlySelected;
+    }
+
     public virtual void PerformAction(string actionToPerform)
     {
         //it is up to children with specific actions to determine what to do with each of those actions
@@ -109,9 +114,14 @@ public class WorldObject : MonoBehaviour
         }
     }
 
+    public Bounds GetSelectionBounds()
+    {
+        return selectionBounds;
+    }
+
     public virtual void SetHoverState(GameObject hoverObject)
     {
-        if (player && player.human && currentlySelected)
+        if (IsSelected())
         {
             if (hoverObject.name != "Ground") player.hud.SetCursorState(CursorState.Select);
         }

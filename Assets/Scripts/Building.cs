@@ -112,11 +112,6 @@ public class Building : WorldObject
             if (flag) flag.transform.localPosition = rallyPoint;
         }
     }
-    
-    private bool IsSelected()
-    {
-        return player && player.human && currentlySelected;
-    }
 
     protected void CreateUnit(string unitName)
     {

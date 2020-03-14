@@ -127,6 +127,7 @@ namespace RTS
     {
         Money, 
         Power,
+        Gold,
         Unknown
     }
 }

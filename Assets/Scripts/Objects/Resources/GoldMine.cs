@@ -25,6 +25,7 @@ public class GoldMine : Resource
         float percentLeft = (float)amtLeft / (float)capacity;
         if (percentLeft < 0) percentLeft = 0;
         int numBlocksToShow = (int)(percentLeft * numBlocks);
+        if (!IsEmpty() && numBlocksToShow <= 0) numBlocksToShow = 1;
         Gold[] blocks = GetComponentsInChildren<Gold>();
         if (numBlocksToShow >= 0 && numBlocksToShow < blocks.Length)
         {
@@ -35,7 +36,7 @@ public class GoldMine : Resource
                 sortedBlocks[blocks.Length - int.Parse(gold.name)] = gold;
             }
 
-            for (int i = 0; i < sortedBlocks.Length; i++)
+            for (int i = numBlocksToShow; i < sortedBlocks.Length; i++)
             {
                 sortedBlocks[i].GetComponent<Renderer>().enabled = false;
             }

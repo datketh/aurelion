@@ -9,7 +9,7 @@ public class Factory : Building
     {
         base.Start();
 
-        actions = new string[] { "Tank" };
+        actions = new string[] { "Tank", "Tank", "Harvester" };
     }
 
     public override void PerformAction(string actionToPerform)

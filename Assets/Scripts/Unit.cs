@@ -12,6 +12,7 @@ public class Unit : WorldObject
 
     private Vector3 destination;
     private Quaternion targetRotation;
+    protected GameObject destinationTarget;
 
     /*** Game Engine methods, all can be overridden by subclass ***/
 
@@ -41,7 +42,7 @@ public class Unit : WorldObject
     {
         base.SetHoverState(hoverObject);
         // Only handle input if owned by human player and selected currently
-        if (player && player.human && currentlySelected)
+        if (IsSelected())
         {
             if (hoverObject.name == "Ground") player.hud.SetCursorState(CursorState.Move);
         }
@@ -51,7 +52,7 @@ public class Unit : WorldObject
     {
         base.MouseClick(hitObject, hitPoint, controller);
         // Only handle input if owned by human player and selected
-        if (player && player.human && currentlySelected)
+        if (IsSelected())
         {
             if (hitObject.name == "Ground" && hitPoint != ResourceManager.InvalidPosition)
             {
@@ -71,6 +72,7 @@ public class Unit : WorldObject
         targetRotation = Quaternion.LookRotation(destination - transform.position);
         rotating = true;
         moving = false;
+        destinationTarget = null;
     }
 
     private void TurnToTarget()
@@ -84,6 +86,7 @@ public class Unit : WorldObject
             moving = true;
         }
         CalculateBounds();
+        if (destinationTarget) CalculateTargetDestination();
     }
 
     private void MakeMove()
@@ -91,5 +94,39 @@ public class Unit : WorldObject
         transform.position = Vector3.MoveTowards(transform.position, destination, Time.deltaTime * moveSpeed);
         if (transform.position == destination) moving = false;
         CalculateBounds();
+    }
+
+    private void CalculateTargetDestination()
+    {
+        //calculate number of unit vectors from unit centre to unit edge of bounds
+        Vector3 originalExtents = selectionBounds.extents;
+        Vector3 normalExtents = originalExtents;
+        normalExtents.Normalize();
+        float numberOfExtents = originalExtents.x / normalExtents.x;
+        int unitShift = Mathf.FloorToInt(numberOfExtents);
+
+        //calculate number of unit vectors from target centre to target edge of bounds
+        WorldObject worldObject = destinationTarget.GetComponent<WorldObject>();
+        if (worldObject) originalExtents = worldObject.GetSelectionBounds().extents;
+        else originalExtents = new Vector3(0.0f, 0.0f, 0.0f);
+        normalExtents = originalExtents;
+        normalExtents.Normalize();
+        numberOfExtents = originalExtents.x / normalExtents.x;
+        int targetShift = Mathf.FloorToInt(numberOfExtents);
+
+        //calculate number of unit vectors between unit centre and destination centre with bounds just touching
+        int shiftAmount = targetShift + unitShift;
+
+        //calculate direction unit needs to travel to reach destination in straight line and normalize to unit vector
+        Vector3 origin = transform.position;
+        Vector3 direction = new Vector3(destination.x - origin.x, 0.0f, destination.z - origin.z);
+        direction.Normalize();
+
+        //destination = center of destination - number of unit vectors calculated above
+        //this should give us a destination where the unit will not quite collide with the target
+        //giving the illusion of moving to the edge of the target and then stopping
+        for (int i = 0; i < shiftAmount; i++) destination -= direction;
+        destination.y = destinationTarget.transform.position.y;
+        destinationTarget = null;
     }
 }
