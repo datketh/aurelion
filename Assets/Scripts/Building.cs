@@ -74,6 +74,8 @@ public class Building : WorldObject
                         hitPoint != ResourceManager.InvalidPosition)
                 {
                     SetRallyPoint(hitPoint);
+                    player.hud.SetCursorState(CursorState.PanRight);
+                    player.hud.SetCursorState(CursorState.Select);
                 }
             }
         }
