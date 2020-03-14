@@ -34,7 +34,7 @@ public class Resource : WorldObject
         return amtLeft <= 0;
     }
 
-    public ResourceType GetType()
+    public ResourceType GetResType()
     {
         return type;
     }
