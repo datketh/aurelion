@@ -6,6 +6,8 @@ using RTS;
 public class Building : WorldObject
 {
 
+    public Texture2D rallyPointImage;
+    public Texture2D sellImage;
     public float maxBuildProgress;
     protected Queue<string> buildQueue;
     private float currentBuildProgress = 0.0f;
@@ -17,9 +19,9 @@ public class Building : WorldObject
         base.Awake();
 
         buildQueue = new Queue<string>();
-        float spawnX = selectionBounds.center.x + transform.forward.x * (selectionBounds.extents.x + 2);
-        float spawnZ = selectionBounds.center.z + transform.forward.z * (selectionBounds.extents.z + 2);
-        spawnPoint = new Vector3(spawnX, 0.0f, spawnZ);
+        float spawnX = selectionBounds.center.x + transform.forward.x * (selectionBounds.extents.x - 1);
+        float spawnZ = selectionBounds.center.z + transform.forward.z * (selectionBounds.extents.z - 1);
+        spawnPoint = new Vector3(spawnX, transform.position.y, spawnZ);
 
         rallyPoint = spawnPoint;
     }
@@ -38,6 +40,43 @@ public class Building : WorldObject
     protected override void OnGUI()
     {
         base.OnGUI();
+    }
+
+    public void Sell()
+    {
+        if (player) player.AddResource(ResourceType.Money, sellValue);
+        if (currentlySelected) SetSelection(false, playingArea);
+        Destroy(this.gameObject);
+    }
+
+    public override void SetHoverState(GameObject hoverObject)
+    {
+        base.SetHoverState(hoverObject);
+
+        if (IsSelected())
+        {
+            if (hoverObject.name == "Ground")
+            {
+                if (player.hud.GetPreviousCursorState() == CursorState.RallyPoint) player.hud.SetCursorState(CursorState.RallyPoint);
+            }
+        }
+    }
+
+    public override void MouseClick(GameObject hitObject, Vector3 hitPoint, Player controller)
+    {
+        base.MouseClick(hitObject, hitPoint, controller);
+
+        if (IsSelected())
+        {
+            if (hitObject.name == "Ground")
+            {
+                if ((player.hud.GetCursorState() == CursorState.RallyPoint || player.hud.GetPreviousCursorState() == CursorState.RallyPoint) &&
+                        hitPoint != ResourceManager.InvalidPosition)
+                {
+                    SetRallyPoint(hitPoint);
+                }
+            }
+        }
     }
 
     public override void SetSelection(bool selected, Rect playArea)
@@ -62,6 +101,21 @@ public class Building : WorldObject
         }
     }
 
+    public void SetRallyPoint(Vector3 pos)
+    {
+        rallyPoint = pos;
+        if (IsSelected())
+        {
+            RallyPoint flag = player.GetComponentInChildren<RallyPoint>();
+            if (flag) flag.transform.localPosition = rallyPoint;
+        }
+    }
+    
+    private bool IsSelected()
+    {
+        return player && player.human && currentlySelected;
+    }
+
     protected void CreateUnit(string unitName)
     {
         buildQueue.Enqueue(unitName);
@@ -74,7 +128,7 @@ public class Building : WorldObject
             currentBuildProgress += Time.deltaTime * ResourceManager.BuildSpeed;
             if (currentBuildProgress > maxBuildProgress)
             {
-                if (player) player.AddUnit(buildQueue.Dequeue(), spawnPoint, transform.rotation);
+                if (player) player.AddUnit(buildQueue.Dequeue(), spawnPoint, rallyPoint, transform.rotation);
                 currentBuildProgress = 0.0f;
             }
         }
@@ -94,5 +148,10 @@ public class Building : WorldObject
     public float GetBuildPercentage()
     {
         return currentBuildProgress / maxBuildProgress;
+    }
+
+    public bool HasSpawnPoint()
+    {
+        return spawnPoint != ResourceManager.InvalidPosition && rallyPoint != ResourceManager.InvalidPosition;
     }
 }

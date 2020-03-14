@@ -67,11 +67,12 @@ public class Player : MonoBehaviour
         AddResource(ResourceType.Power, startPower);
     }
 
-    public void AddUnit(string name, Vector3 spawnPoint, Quaternion rotation)
+    public void AddUnit(string name, Vector3 spawnPoint, Vector3 rallyPoint, Quaternion rotation)
     {
-        Debug.Log("Add " + name + "to player");
         Units units = GetComponentInChildren<Units>();
         GameObject newUnit = (GameObject)Instantiate(ResourceManager.GetUnit(name), spawnPoint, rotation);
         newUnit.transform.parent = units.transform;
+        Unit unitObject = newUnit.GetComponent<Unit>();
+        if (unitObject && spawnPoint != rallyPoint) unitObject.StartMove(rallyPoint);
     }
 }

@@ -20,10 +20,11 @@ public class PlayerUI : MonoBehaviour
     public GUISkin mouseCursorSkin;
 
     public Texture2D activeCursor;
-    public Texture2D selectCursor, leftCursor, rightCursor, upCursor, downCursor;
+    public Texture2D selectCursor, leftCursor, rightCursor, upCursor, downCursor, rallyPointCursor;
     public Texture2D[] moveCursors, attackCursors, harvestCursors;
 
     public Texture2D buttonClick, buttonHover;
+    public Texture2D smallButtonHover, smallButtonClick;
 
     public Texture2D buildFrame, buildMask;
 
@@ -31,6 +32,7 @@ public class PlayerUI : MonoBehaviour
     private Dictionary<ResourceType, Texture2D> resourceImages;
 
     private CursorState activeCursorState;
+    private CursorState previousCursorState;
     private int currentFrame;
 
     private Dictionary<ResourceType, int> resourceValues, resourceLimits;
@@ -85,6 +87,7 @@ public class PlayerUI : MonoBehaviour
                 if (selectedBuilding)
                 {
                     DrawBuildQueue(selectedBuilding.GetBuildQueueValues(), selectedBuilding.GetBuildPercentage());
+                    DrawStandardBuildingOptions(selectedBuilding);
                 }
             }
         }
@@ -96,6 +99,40 @@ public class PlayerUI : MonoBehaviour
         }
 
         GUI.EndGroup();
+    }
+
+    private void DrawStandardBuildingOptions(Building building)
+    {
+        GUIStyle buttons = new GUIStyle();
+        buttons.hover.background = smallButtonHover;
+        buttons.active.background = smallButtonClick;
+        GUI.skin.button = buttons;
+
+        int left = BUILD_IMG_WIDTH + SCROLL_BAR_WIDTH + BUTTON_SPACING;
+        int top = buildAreaHeight - BUILD_IMG_HEIGHT / 2;
+        int width = BUILD_IMG_WIDTH / 2;
+        int height = BUILD_IMG_HEIGHT / 2;
+
+        if (GUI.Button(new Rect(left, top, width, height), building.sellImage))
+        {
+            building.Sell();
+        }
+
+        left += width + BUTTON_SPACING;
+
+        if (building.HasSpawnPoint())
+        {
+            if (GUI.Button(new Rect(left, top, width, height), building.rallyPointImage))
+            {
+                if (activeCursorState != CursorState.RallyPoint && previousCursorState != CursorState.RallyPoint) SetCursorState(CursorState.RallyPoint);
+                else
+                {
+                    SetCursorState(CursorState.PanRight);
+                    SetCursorState(CursorState.Select);
+                }
+                
+            }
+        }
     }
 
     private void DrawActions(string[] actions)
@@ -240,6 +277,7 @@ public class PlayerUI : MonoBehaviour
 
     public void SetCursorState(CursorState newState)
     {
+        if (activeCursorState != newState) previousCursorState = activeCursorState;
         activeCursorState = newState;
         switch (newState)
         {
@@ -266,6 +304,10 @@ public class PlayerUI : MonoBehaviour
                 break;
             case CursorState.PanDown:
                 activeCursor = downCursor;
+                break;
+
+            case CursorState.RallyPoint:
+                activeCursor = rallyPointCursor;
                 break;
             default:
                 break;
@@ -322,6 +364,20 @@ public class PlayerUI : MonoBehaviour
             topPos -= activeCursor.height / 2;
             leftPos -= activeCursor.width / 2;
         }
+        else if (activeCursorState == CursorState.RallyPoint)
+        {
+            topPos -= activeCursor.height;
+        }
         return new Rect(leftPos, topPos, activeCursor.width, activeCursor.height);
+    }
+
+    public CursorState GetCursorState()
+    {
+        return activeCursorState;
+    }
+
+    public CursorState GetPreviousCursorState()
+    {
+        return previousCursorState;
     }
 }
