@@ -19,6 +19,8 @@ public class PlayerUI : MonoBehaviour
     public GUISkin selectBoxSkin;
     public GUISkin mouseCursorSkin;
 
+    public Texture2D healthy, damaged, critical;
+
     public Texture2D activeCursor;
     public Texture2D selectCursor, leftCursor, rightCursor, upCursor, downCursor, rallyPointCursor;
     public Texture2D[] moveCursors, attackCursors, harvestCursors;
@@ -46,7 +48,7 @@ public class PlayerUI : MonoBehaviour
     void Start()
     {
         player = transform.root.GetComponent<Player>();
-        ResourceManager.StoreSelectBoxItems(selectBoxSkin);
+        ResourceManager.StoreSelectBoxItems(selectBoxSkin, healthy, damaged, critical);
         SetCursorState(CursorState.Select);
         resourceValues = new Dictionary<ResourceType, int>();
         resourceLimits = new Dictionary<ResourceType, int>();

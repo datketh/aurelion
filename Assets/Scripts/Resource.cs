@@ -21,6 +21,15 @@ public class Resource : WorldObject
         type = ResourceType.Unknown;
     }
 
+    protected override void Update()
+    {
+        base.Update();
+        if (IsEmpty())
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
     /* - Public methods - */
 
     public void Remove(float amt)
@@ -37,5 +46,10 @@ public class Resource : WorldObject
     public ResourceType GetResType()
     {
         return type;
+    }
+
+    protected override void DrawSelectionBox(Rect selectBox)
+    {
+        GUI.Box(selectBox, "");
     }
 }

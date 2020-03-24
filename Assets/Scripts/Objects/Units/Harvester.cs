@@ -23,6 +23,12 @@ public class Harvester : Unit
         base.Start();
     }
 
+    public override void Init(Building creator)
+    {
+        base.Init(creator);
+        depot = creator;
+    }
+
     protected override void Update()
     {
         base.Update();
