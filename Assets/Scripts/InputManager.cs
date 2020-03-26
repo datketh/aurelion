@@ -3,24 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using RTS;
 
-public class InputManager : MonoBehaviour {
+public class InputManager : MonoBehaviour
+{
 
     private Player player;
 
     // Start is called before the first frame update
-    void Start() {
+    void Start()
+    {
         player = transform.root.GetComponent<Player>();
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
         if (player && player.human)
         {
             MoveCamera();
             RotateCamera();
             MouseActivity();
         }
-        
+
     }
 
     void MoveCamera()
@@ -79,7 +82,8 @@ public class InputManager : MonoBehaviour {
         if (destination.y > ResourceManager.MaxCameraHeight)
         {
             destination.y = ResourceManager.MaxCameraHeight;
-        } else if (destination.y < ResourceManager.MinCameraHeight)
+        }
+        else if (destination.y < ResourceManager.MinCameraHeight)
         {
             destination.y = ResourceManager.MinCameraHeight;
         }
@@ -98,7 +102,7 @@ public class InputManager : MonoBehaviour {
     }
 
     void RotateCamera()
-    {   
+    {
         // Initialize origin and destination points
         Vector3 origin = Camera.main.transform.eulerAngles;
         Vector3 destination = origin;
@@ -128,18 +132,25 @@ public class InputManager : MonoBehaviour {
     {
         if (player.hud.MouseInBounds())
         {
-            GameObject hoverObject = FindHitObject();
-            if (hoverObject)
+            if (player.IsFindingBuildingLocation())
             {
-                if (player.SelectedObject) player.SelectedObject.SetHoverState(hoverObject);
-                else if (hoverObject.name != "Ground")
+                player.FindBuildingLocation();
+            }
+            else
+            {
+                GameObject hoverObject = WorkManager.FindHitObject(Input.mousePosition);
+                if (hoverObject)
                 {
-                    Player owner = hoverObject.transform.root.GetComponent<Player>();
-                    if (owner)
+                    if (player.SelectedObject) player.SelectedObject.SetHoverState(hoverObject);
+                    else if (hoverObject.name != "Ground")
                     {
-                        Unit unit = hoverObject.transform.parent.GetComponent<Unit>();
-                        Building building = hoverObject.transform.parent.GetComponent<Building>();
-                        if (owner.username == player.username && (unit || building)) player.hud.SetCursorState(CursorState.Select);
+                        Player owner = hoverObject.transform.root.GetComponent<Player>();
+                        if (owner)
+                        {
+                            Unit unit = hoverObject.transform.parent.GetComponent<Unit>();
+                            Building building = hoverObject.transform.parent.GetComponent<Building>();
+                            if (owner.username == player.username && (unit || building)) player.hud.SetCursorState(CursorState.Select);
+                        }
                     }
                 }
             }
@@ -150,8 +161,8 @@ public class InputManager : MonoBehaviour {
     {
         if (player.hud.MouseInBounds())
         {
-            GameObject hitObject = FindHitObject();
-            Vector3 hitPoint = FindHitPoint();
+            GameObject hitObject = WorkManager.FindHitObject(Input.mousePosition);
+            Vector3 hitPoint = WorkManager.FindHitPoint(Input.mousePosition);
             if (hitObject && hitPoint != ResourceManager.InvalidPosition)
             {
                 if (player.SelectedObject) player.SelectedObject.MouseClick(hitObject, hitPoint, player);
@@ -178,19 +189,4 @@ public class InputManager : MonoBehaviour {
         }
     }
 
-    private GameObject FindHitObject()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit)) return hit.collider.gameObject;
-        return null;
-    }
-
-    private Vector3 FindHitPoint()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit)) return hit.point;
-        return ResourceManager.InvalidPosition;
-    }
 }

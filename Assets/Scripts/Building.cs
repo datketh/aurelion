@@ -13,6 +13,7 @@ public class Building : WorldObject
     private float currentBuildProgress = 0.0f;
     private Vector3 spawnPoint;
     protected Vector3 rallyPoint;
+    private bool needsBuilding = false;
 
     protected override void Awake()
     {
@@ -40,6 +41,17 @@ public class Building : WorldObject
     protected override void OnGUI()
     {
         base.OnGUI();
+    }
+
+    private void DrawBuildProgress()
+    {
+        GUI.skin = ResourceManager.SelectBoxSkin;
+        Rect selectBox = WorkManager.CalculateSelectionBox(selectionBounds, playingArea);
+
+        GUI.BeginGroup(playingArea);
+        CalculateCurrentHealth(0.5f, 0.99f);
+        DrawHealthBar(selectBox, "Building...");
+        GUI.EndGroup();
     }
 
     public void Sell()
@@ -101,6 +113,13 @@ public class Building : WorldObject
                 }
             }
         }
+    }
+
+    public void StartConstruction()
+    {
+        CalculateBounds();
+        needsBuilding = true;
+        hitPoints = 0;
     }
 
     public void SetRallyPoint(Vector3 pos)
