@@ -21,6 +21,15 @@ public class Resource : WorldObject
         type = ResourceType.Unknown;
     }
 
+    protected override void Update()
+    {
+        base.Update();
+        if (IsEmpty())
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
     /* - Public methods - */
 
     public void Remove(float amt)

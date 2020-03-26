@@ -65,7 +65,12 @@ public class WorldObject : MonoBehaviour
         {
             WorldObject worldObject = hitObject.transform.parent.GetComponent<WorldObject>();
             //clicked on another selectable object
-            if (worldObject) ChangeSelection(worldObject, controller);
+            if (worldObject)
+            {
+                Resource resource = hitObject.transform.parent.GetComponent<Resource>();
+                if (resource && resource.IsEmpty()) return;
+                ChangeSelection(worldObject, controller);
+            }
         }
     }
 
