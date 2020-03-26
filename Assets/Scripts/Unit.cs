@@ -43,11 +43,6 @@ public class Unit : WorldObject
         base.OnGUI();
     }
 
-    public virtual void Init(Building creator)
-    {
-        // Override me
-    }
-
     public override void SetHoverState(GameObject hoverObject)
     {
         base.SetHoverState(hoverObject);

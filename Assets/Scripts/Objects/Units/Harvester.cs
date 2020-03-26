@@ -72,12 +72,6 @@ public class Harvester : Unit
 
     /* - Public methods - */
 
-    public override void Init(Building creator)
-    {
-        base.Init(creator);
-        depot = creator;
-    }
-
     public override void SetHoverState(GameObject hoverObject)
     {
         base.SetHoverState(hoverObject);
