@@ -26,6 +26,11 @@ public class Unit : WorldObject
         base.Start();
     }
 
+    public virtual void Init(Building creator)
+    {
+        //specific initialization for a unit can be specified here
+    }
+
     protected override void Update()
     {
         base.Update();

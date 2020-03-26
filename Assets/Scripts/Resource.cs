@@ -47,4 +47,9 @@ public class Resource : WorldObject
     {
         return type;
     }
+
+    protected override void DrawSelectionBox(Rect selectBox)
+    {
+        GUI.Box(selectBox, "");
+    }
 }

@@ -651,6 +651,9 @@ MonoBehaviour:
   ordersSkin: {fileID: 11400000, guid: b98b70210b113c34c91dd025d0012911, type: 2}
   selectBoxSkin: {fileID: 11400000, guid: 0ae517d93f0c395479e5332273ff0372, type: 2}
   mouseCursorSkin: {fileID: 11400000, guid: 3c452c86b7eb6ea44a37fab0af8b34c2, type: 2}
+  healthy: {fileID: 2800000, guid: 853916a64ada8054fa5c48ecd0a700c2, type: 3}
+  damaged: {fileID: 2800000, guid: 47cdc8959b8a9b74da5c99582a63d387, type: 3}
+  critical: {fileID: 2800000, guid: 0f9e0a78e9425af48bbe114691e70d28, type: 3}
   activeCursor: {fileID: 2800000, guid: de45642e122f0154ba13931c12c097b4, type: 3}
   selectCursor: {fileID: 2800000, guid: 354dbdd9ae78d0149a111062c09b2728, type: 3}
   leftCursor: {fileID: 2800000, guid: c1633a43ead5daa4fa7e7c4261b58011, type: 3}
@@ -907,6 +910,16 @@ PrefabInstance:
       propertyPath: depot
       value: 
       objectReference: {fileID: 630329035}
+    - target: {fileID: 4301281688402157372, guid: edddc57acd25f0f40b1f850a36e261db,
+        type: 3}
+      propertyPath: hitPoints
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4301281688402157372, guid: edddc57acd25f0f40b1f850a36e261db,
+        type: 3}
+      propertyPath: maxHitPoints
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 4301281688402157373, guid: edddc57acd25f0f40b1f850a36e261db,
         type: 3}
       propertyPath: m_LocalPosition.x
