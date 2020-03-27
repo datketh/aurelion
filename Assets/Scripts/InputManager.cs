@@ -161,19 +161,26 @@ public class InputManager : MonoBehaviour
     {
         if (player.hud.MouseInBounds())
         {
-            GameObject hitObject = WorkManager.FindHitObject(Input.mousePosition);
-            Vector3 hitPoint = WorkManager.FindHitPoint(Input.mousePosition);
-            if (hitObject && hitPoint != ResourceManager.InvalidPosition)
+            if (player.IsFindingBuildingLocation())
             {
-                if (player.SelectedObject) player.SelectedObject.MouseClick(hitObject, hitPoint, player);
-                else if (hitObject.name != "Ground")
+                if (player.CanPlaceBuilding()) player.StartConstruction();
+            }
+            else
+            {
+                GameObject hitObject = WorkManager.FindHitObject(Input.mousePosition);
+                Vector3 hitPoint = WorkManager.FindHitPoint(Input.mousePosition);
+                if (hitObject && hitPoint != ResourceManager.InvalidPosition)
                 {
-                    WorldObject worldObject = hitObject.transform.parent.GetComponent<WorldObject>();
-                    if (worldObject)
+                    if (player.SelectedObject) player.SelectedObject.MouseClick(hitObject, hitPoint, player);
+                    else if (hitObject.name != "Ground")
                     {
-                        //we already know the player has no selected object
-                        player.SelectedObject = worldObject;
-                        worldObject.SetSelection(true, player.hud.GetPlayingArea());
+                        WorldObject worldObject = hitObject.transform.parent.GetComponent<WorldObject>();
+                        if (worldObject)
+                        {
+                            //we already know the player has no selected object
+                            player.SelectedObject = worldObject;
+                            worldObject.SetSelection(true, player.hud.GetPlayingArea());
+                        }
                     }
                 }
             }
@@ -184,8 +191,15 @@ public class InputManager : MonoBehaviour
     {
         if (player.hud.MouseInBounds() && !Input.GetKey(KeyCode.LeftAlt) && player.SelectedObject)
         {
-            player.SelectedObject.SetSelection(false, player.hud.GetPlayingArea());
-            player.SelectedObject = null;
+            if (player.IsFindingBuildingLocation())
+            {
+                player.CancelBuildingPlacement();
+            }
+            else
+            {
+                player.SelectedObject.SetSelection(false, player.hud.GetPlayingArea());
+                player.SelectedObject = null;
+            }
         }
     }
 

@@ -78,7 +78,7 @@ public class PlayerUI : MonoBehaviour
         if (player.SelectedObject)
         {
             selectionName = player.SelectedObject.objectName;
-            if (player.SelectedObject.IsOwnedBy(player))
+            if (player.SelectedObject.IsOwnedBy(player) && !player.SelectedObject.UnderConstruction())
             {
                 if (lastSelection && lastSelection != player.SelectedObject) sliderValue = 0.0f;
                 DrawActions(player.SelectedObject.GetActions());
@@ -160,7 +160,11 @@ public class PlayerUI : MonoBehaviour
             {
                 if (GUI.Button(pos, action))
                 {
-                    if (player.SelectedObject) player.SelectedObject.PerformAction(actions[i]);
+
+                    if (player.SelectedObject)
+                    {
+                        player.SelectedObject.PerformAction(actions[i]);
+                    }
                 }
             }
         }

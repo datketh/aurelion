@@ -23,6 +23,21 @@ public class Worker : Unit
     protected override void Update()
     {
         base.Update();
+
+        if (!moving && !rotating)
+        {
+            if (building && currentProject && currentProject.UnderConstruction())
+            {
+                amtBuilt += buildSpeed * Time.deltaTime;
+                int amt = Mathf.FloorToInt(amtBuilt);
+                if (amt > 0)
+                {
+                    amtBuilt -= amt;
+                    currentProject.Construct(amt);
+                    if (!currentProject.UnderConstruction()) building = false;
+                }
+            }
+        }
     }
 
     // Public methods
@@ -45,11 +60,31 @@ public class Worker : Unit
     {
         base.StartMove(destination);
         amtBuilt = 0.0f;
+        building = false;
     }
 
     private void CreateBuilding(string buildingName)
     {
         Vector3 buildPoint = new Vector3(transform.position.x, transform.position.y, transform.position.z + 10);
         if (player) player.CreateBuilding(buildingName, buildPoint, this, playingArea);
+    }
+
+    public override void MouseClick(GameObject hitObject, Vector3 hitPoint, Player controller)
+    {
+        bool doBase = true;
+        //only handle input if owned by a human player and currently selected
+        if (player && player.human && currentlySelected && hitObject && hitObject.name != "Ground")
+        {
+            Building building = hitObject.transform.parent.GetComponent<Building>();
+            if (building)
+            {
+                if (building.UnderConstruction())
+                {
+                    SetBuilding(building);
+                    doBase = false;
+                }
+            }
+        }
+        if (doBase) base.MouseClick(hitObject, hitPoint, controller);
     }
 }

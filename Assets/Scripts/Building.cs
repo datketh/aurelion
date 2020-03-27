@@ -35,7 +35,8 @@ public class Building : WorldObject
     protected override void Update()
     {
         base.Update();
-        ProcessBuildQueue();
+        if (!UnderConstruction())
+            ProcessBuildQueue();
     }
 
     protected override void OnGUI()
@@ -52,6 +53,22 @@ public class Building : WorldObject
         CalculateCurrentHealth(0.5f, 0.99f);
         DrawHealthBar(selectBox, "Building...");
         GUI.EndGroup();
+    }
+
+    public override bool UnderConstruction()
+    {
+        return needsBuilding;
+    }
+
+    public void Construct(int amt)
+    {
+        hitPoints += amt;
+        if (hitPoints >= maxHitPoints)
+        {
+            hitPoints = maxHitPoints;
+            needsBuilding = false;
+            RestoreMaterials();
+        }
     }
 
     public void Sell()

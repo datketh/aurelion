@@ -129,6 +129,11 @@ public class WorldObject : MonoBehaviour
         GUI.EndGroup();
     }
 
+    public virtual bool UnderConstruction()
+    {
+        return false;
+    }
+
     protected virtual void CalculateCurrentHealth(float lowSplit, float highSplit)
     {
         healthPercentage = (float)hitPoints / (float)maxHitPoints;
